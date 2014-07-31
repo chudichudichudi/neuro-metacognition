@@ -41,7 +41,7 @@ var config = {
 };
 
 metacog.create_log = function() {
-  var data = JSON.stringify({sujeto: $('#sujeto').val()});
+  var data = JSON.stringify({test_subject: $('#sujeto').val(), experiment_name: "metacog"});
   $.ajax("/create_log", {
       data: data,
       contentType : "application/json",
@@ -54,14 +54,13 @@ metacog.create_log = function() {
 
 metacog.append_log = function() {
   var update_info = { 
-                      sujeto: $('#sujeto').val(),
-                      log: metacog.trials.trial_results, 
+                      experiment_log: metacog.trials.trial_results, 
                       id: metacog.trials.log_id
                     };
-  metacog.trials.prepare_for_update();
   var data = JSON.stringify(update_info);
   $.ajax("/append_log", {
       data: data,
+      async: false,
       contentType : "application/json",
       type : "POST",
       success: function () {
@@ -112,6 +111,9 @@ metacog.end_trial = function() {
 
 metacog.new_trial = function () {
   metacog.end_trial();
+  var t0 = goog.now();
+  metacog.append_log();
+  console.log(goog.now() - t0);
   metacog.create_trial();
 };
 
